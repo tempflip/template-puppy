@@ -33,27 +33,33 @@ public with sharing class Puppy {
             ////////////////////////////////
             this.body = '';
             Integer blockCounter = 0;
+            String htmlEnd;
+            Boolean groupMatched = false;
             while (m.matches()) {
-                
+                groupMatched = true;
                 this.childrenBlockList.add(blockFactory(m.group(2)));
-                String restOfString = html.subString(m.end(2));
+                html = m.group(5);
 
-                html = restOfString;
+                // system.assert(false, m.group(1) + ' >2|| ' + m.group(2) + ' >3|| ' + m.group(3) + ' >4|| ' + m.group(4) + ' >5|| ' + m.group(5));
 
-                this.body += m.group(1)
-                            + '{{BLOCK N ' + blockCounter + ' }}'
-                            + m.group(5)
+                this.body = this.body + m.group(1)
+                            + '{### BLOCK N ' + blockCounter + ' }'
                             ;
+                
+                htmlEnd = m.group(5);
 
                 // next step
                 m = BLOCK_PATTERN.matcher(html);
+                // htmlEnd = m.group(m.groupCount()-1);
 
+                blockCounter += 1;
             }
-            if (body == '') {
+            this.body = this.body + htmlEnd;
+            
+            if (!groupMatched) {
                 this.body = htmlParam;
             }
 
-            // system.assert(false, '>> ' + childrenBlockList);
         }
     }
 
@@ -66,7 +72,7 @@ public with sharing class Puppy {
             Matcher m = EACH_PATTERN.matcher(html);
             if (m.matches()) {
                 this.varName = m.group(1);
-                this.bodyBlock = new Block(m.group(2));
+                this.bodyBlock = new Block(m.group(2));                
             } else {
                 system.assert(false, 'BlockEach error!');
             }
