@@ -13,7 +13,9 @@ public with sharing class Puppy {
     public class Block implements IBlock {
         public String body;
         public IBlock[] childrenBlockList;
-        private String[] markList;
+        private FieldMark[] fieldMarkList;
+        
+
 
         public Block(String html) {
             this.parseBlocks(html);
@@ -22,7 +24,6 @@ public with sharing class Puppy {
         private void parseBlocks(String htmlParam) {
 
             String html = htmlParam.replaceAll('\r\n|\n|\r',' ');
-            this.markList = new String[]{};
             this.childrenBlockList = new IBlock[]{};
 
             system.debug('>>>> ' + html);
@@ -60,6 +61,19 @@ public with sharing class Puppy {
                 this.body = htmlParam;
             }
 
+            this.parseFieldNames();
+
+        }
+
+        private void parseFieldNames() {
+            this.fieldMarkList = new FieldMark[]{};
+            String html = this.body;
+            Matcher m = MARK_PATTERN.matcher(html);
+            while (m.matches()) {
+                this.fieldMarkList.add(new FieldMark(m.group(1)));
+                html = html.substring(m.end(1));
+                m = MARK_PATTERN.matcher(html);
+            }
         }
     }
 
@@ -76,6 +90,14 @@ public with sharing class Puppy {
             } else {
                 system.assert(false, 'BlockEach error!');
             }
+        }
+    }
+
+    public class FieldMark {
+        String fieldName;
+
+        public FieldMark(String f) {
+            this.fieldName = f;
         }
     }
 
