@@ -7,14 +7,13 @@ public with sharing class Puppy {
     static Pattern BLOCK_PATTERN = Pattern.compile('(.+?)(\\{\\{#(each|block).+?/(each|block)\\}\\})(.+)');
 
     Interface IBlock {
-        
+        String getRelQuery();
     }
 
-    public class Block implements IBlock {
+    public virtual class Block implements IBlock {
         public String body;
         public IBlock[] childrenBlockList;
         private FieldMark[] fieldMarkList;
-        
 
 
         public Block(String html) {
@@ -62,20 +61,69 @@ public with sharing class Puppy {
             }
 
             this.parseFieldNames();
-
         }
 
         private void parseFieldNames() {
             this.fieldMarkList = new FieldMark[]{};
             String html = this.body;
+            html = html.replaceAll('\r\n|\n|\r',' ');
+
             Matcher m = MARK_PATTERN.matcher(html);
+            // system.assert(false, html);
+
             while (m.matches()) {
                 this.fieldMarkList.add(new FieldMark(m.group(1)));
                 html = html.substring(m.end(1));
                 m = MARK_PATTERN.matcher(html);
             }
         }
+
+        public virtual String  getRelQuery() {
+            system.assert(false, 'not implemented here');
+            return null;
+        }
+
+        public Set<String> getFieldNameSet() {
+            Set<String> fieldNameSet = new Set<String>();
+            for (FieldMark fm : this.fieldMarkList) {
+                fieldNameSet.add(fm.fieldName);
+            }
+
+            return fieldNameSet;
+        }        
+
     }
+    
+    public class RootBlock extends Block {
+        public Id sourceRecordId;
+        private Schema.SObjectType sObjectType;
+
+        public RootBlock(String html, Id sourceRecordId) {
+            super(html);
+            this.sourceRecordId = sourceRecordId;
+            this.sObjectType = sourceRecordId.getSObjectType();
+        }
+
+        public override String getRelQuery() {
+            
+            String[] qElements = new List<String>(this.getFieldNameSet());
+            
+            if (this.childrenBlockList != null) {
+                for (IBlock childBlock : this.childrenBlockList) {
+                    qElements.add('( ' + childBlock.getRelQuery() + ' )');
+                }
+            }
+
+            String q =  'SELECT '
+                +  String.join(qElements, ', ')
+                + ' FROM '
+                + this.sObjectType.getDescribe().getName()
+            ;
+            return q;
+        }
+
+    }
+
 
     public class BlockEach implements IBlock {
         // public String body;
@@ -90,6 +138,16 @@ public with sharing class Puppy {
             } else {
                 system.assert(false, 'BlockEach error!');
             }
+        }
+
+        public String getRelQuery() {
+
+            String q = 'SELECT '
+                + String.join(new List<String>(this.bodyBlock.getFieldNameSet()), ', ')
+                + ' FROM '
+                + this.varName
+            ;
+            return q;
         }
     }
 
