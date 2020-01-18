@@ -8,9 +8,10 @@ public with sharing class Puppy {
 
     Interface IBlock {
         String getRelQuery();
+        String render(SOBject so);
     }
 
-    public virtual class Block implements IBlock {
+    public virtual class Block {
         public String body;
         public IBlock[] childrenBlockList;
         private FieldMark[] fieldMarkList;
@@ -78,19 +79,36 @@ public with sharing class Puppy {
             }
         }
 
-        public virtual String  getRelQuery() {
-            system.assert(false, 'not implemented here');
-            return null;
-        }
-
-        public Set<String> getFieldNameSet() {
+        protected Set<String> getFieldNameSet() {
             Set<String> fieldNameSet = new Set<String>();
             for (FieldMark fm : this.fieldMarkList) {
                 fieldNameSet.add(fm.fieldName);
             }
 
             return fieldNameSet;
-        }        
+        } 
+
+        protected String render(SObject so) {
+            String r = this.body;
+            for (FieldMark fm : this.fieldMarkList) {
+                r = r.replaceAll('\\{\\{' + fm.fieldName + '\\}\\}', (String) so.get(fm.fieldName) );
+            }
+
+            // rendering the children blocks
+            if (this.childrenBlockList != null) {
+                Integer c = 0;
+                for (IBlock bl : this.childrenBlockList) {
+                    r = r.replaceAll(
+                            '\\{### BLOCK N ' + c + ' \\}', 
+                            bl.render(so)
+                        );
+
+                    c++;
+                }
+            }
+
+            return r;
+        }       
 
     }
     
@@ -104,7 +122,7 @@ public with sharing class Puppy {
             this.sObjectType = sourceRecordId.getSObjectType();
         }
 
-        public override String getRelQuery() {
+        public String getRelQuery() {
             
             String[] qElements = new List<String>(this.getFieldNameSet());
             
@@ -121,6 +139,11 @@ public with sharing class Puppy {
             ;
             return q;
         }
+
+        public String render() {
+            SObject so = Database.query(this.getRelQuery());
+            return this.render(so);
+        } 
 
     }
 
@@ -148,6 +171,14 @@ public with sharing class Puppy {
                 + this.varName
             ;
             return q;
+        }
+
+        public String render(SOBject so){
+            String r = '';
+            for (SObject soRecord : so.getSObjects(this.varName)) {
+                r = r + this.bodyBlock.render(soRecord);
+            }
+            return r;
         }
     }
 
