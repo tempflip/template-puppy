@@ -91,7 +91,11 @@ public with sharing class Puppy {
         protected String render(SObject so) {
             String r = this.body;
             for (FieldMark fm : this.fieldMarkList) {
-                r = r.replaceAll('\\{\\{' + fm.fieldName + '\\}\\}', (String) so.get(fm.fieldName) );
+
+                r = r.replaceAll(
+                        '\\{\\{' + fm.fieldName + '\\}\\}',
+                        fm.getValueFromSo(so)
+                    );                
             }
 
             // rendering the children blocks
@@ -187,6 +191,18 @@ public with sharing class Puppy {
 
         public FieldMark(String f) {
             this.fieldName = f;
+        }
+
+        public String getValueFromSo(SObject so) {
+            String[] path = this.fieldName.split('\\.');
+            String r;
+            if (path.size() > 1) {
+                r = '' + (so.getSObject(path[0]).get(path[1]));
+            } else {
+                r = '' + so.get(this.fieldName);
+
+            }
+            return r;
         }
     }
 
