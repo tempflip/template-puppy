@@ -10,4 +10,4 @@ jobs:
     steps:
     - uses: forcedotcom/salesforcedx-actions@master
       with: 
-        'force:org:create -f config/project-scratch-def.json -a scratch-org -s -d 1'
+        args: 'force:org:create -f config/project-scratch-def.json -a scratch-org -s -d 1'
