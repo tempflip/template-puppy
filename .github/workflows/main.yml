@@ -9,8 +9,8 @@ jobs:
 
     steps:
      - name: Write the token into a forcedotcom/salesforcedx-actions@master
-       shell: bash
-       run: 'echo ${{ secrets.DEVHUB_TOKEN}} > token.txt'
+        shell: bash
+        run: 'echo ${{ secrets.DEVHUB_TOKEN}} > token.txt'
       - name: welcome
         shell: bash
         run: 'echo HELLO PETER!!'
