@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2              
-      - name: Write the token into a forcedotcom/salesforcedx-actions@master
+      - name: Write the token into a file
         run: 'echo ${{ secrets.DEVHUB_TOKEN}} > token.txt'
       - name: Install Salesforce CLI
         run: |
@@ -28,4 +28,4 @@ jobs:
       - name: Run tests
         run: 'sfdx force:apex:test:run -u my-scratch --resultformat human'
       - name: Delete scratch org
-        run: 'sfdx force:org:delete -u my-scratch'
+        run: 'sfdx force:org:delete -u my-scratch --noprompt'
