@@ -24,5 +24,5 @@ jobs:
       #   uses: forcedotcom/salesforcedx-actions@master
       #   with: 
       #     args: 'force:auth:sfdxurl:store -f token.txt -a DevHub -d'
-      # - name: bu 
-      #   run: 'force:org:list'
+      - name: bu 
+        run: 'force:org:list'
