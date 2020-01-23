@@ -1,0 +1,12 @@
+name: 'sfdx'
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: forcedotcom/salesforcedx-actions@master
+      with : 'force:org:create -f config/project-scratch-def.json -a scratch-org -s -d 1'
