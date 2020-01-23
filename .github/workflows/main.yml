@@ -27,3 +27,5 @@ jobs:
         run: 'sfdx force:org:list'
       - name: Run tests
         run: 'sfdx force:apex:test:run --resultformat human'
+      - name: Delete scratch org
+        run: 'sfdx force:org:delete -u my-scratch'
