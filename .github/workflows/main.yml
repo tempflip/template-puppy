@@ -10,18 +10,15 @@ jobs:
     steps:
       - name: Write the token into a forcedotcom/salesforcedx-actions@master
         run: 'echo ${{ secrets.DEVHUB_TOKEN}} > token.txt'
-      - name: welcome
-        shell: bash
-        run: 'echo HELLO PETER!!'
       - name: Install Salesforce CLI
         run: |
           wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
           mkdir sfdx-cli
           tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
           ./sfdx-cli/install
-      # - name : Auth with the DevHub
-      #   uses: forcedotcom/salesforcedx-actions@master
-      #   with: 
-      #     args: 'force:auth:sfdxurl:store -f token.txt -a DevHub -d'
-      - name: bu
+      - name: Auth with the DevHub
+        run: 'force:auth:sfdxurl:store -f token.txt -a DevHub -d'
+      - name: Create scratch org
+        run: 'sfdx force:org:create -f config/project-scratch-def.json'
+      - name: List orgs
         run: 'sfdx force:org:list'
