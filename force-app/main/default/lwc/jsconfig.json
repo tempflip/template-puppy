@@ -5,6 +5,9 @@
         "paths": {
             "c/templateEditor": [
                 "templateEditor/templateEditor.js"
+            ],
+            "c/quill": [
+                "../staticresources/quill/quill.js"
             ]
         }
     },
