@@ -22,6 +22,8 @@ jobs:
       - name: Create scratch org
         run: 'sfdx force:org:create -f config/project-scratch-def.json -a my-scratch'
       - name: Push source
-        run: 'sfdx force:source:push -u my-scratch'
+        run: |
+          ls -al
+          sfdx force:source:push -u my-scratch
       - name: List orgs
         run: 'sfdx force:org:list'
