@@ -14,12 +14,12 @@ jobs:
       - name: welcome
         shell: bash
         run: 'echo HELLO PETER!!'
-      # - name: Install Salesforce CLI
-      #   run: |
-      #     wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-      #     mkdir sfdx-cli
-      #     tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
-      #     ./sfdx-cli/install
+      - name: Install Salesforce CLI
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx-cli
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
+          ./sfdx-cli/install
       # - name : Auth with the DevHub
       #   uses: forcedotcom/salesforcedx-actions@master
       #   with: 
