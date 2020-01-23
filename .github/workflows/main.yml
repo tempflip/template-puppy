@@ -9,7 +9,6 @@ jobs:
 
     steps:
       - name: Write the token into a forcedotcom/salesforcedx-actions@master
-        shell: bash
         run: 'echo ${{ secrets.DEVHUB_TOKEN}} > token.txt'
       - name: welcome
         shell: bash
@@ -25,5 +24,4 @@ jobs:
       #   with: 
       #     args: 'force:auth:sfdxurl:store -f token.txt -a DevHub -d'
       - name: bu
-        shell: bash
-        run: 'force:org:list'
+        run: 'sfdx force:org:list'
