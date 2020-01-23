@@ -25,3 +25,5 @@ jobs:
         run: 'sfdx force:source:push -u my-scratch'
       - name: List orgs
         run: 'sfdx force:org:list'
+      - name: Run tests
+        run: 'sfdx force:apex:test:run --resultformat human'
